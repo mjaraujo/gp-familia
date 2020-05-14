@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "678620152355",
+    "firebase_url": "https://gpfamilia-4f766.firebaseio.com",
+    "project_id": "gpfamilia-4f766",
+    "storage_bucket": "gpfamilia-4f766.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678620152355:android:c66b2ebf1d0db9f903a796",
+        "android_client_info": {
+          "package_name": "br.com.mjaraujo.gpfamilia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678620152355-bbag2leckga2gu8u3an102lv1crp2iud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcE2ybQtC1DWNBBemib9SV2GwZP8bc980"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678620152355-bbag2leckga2gu8u3an102lv1crp2iud.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678620152355:android:cc29f1e87bb6718e03a796",
+        "android_client_info": {
+          "package_name": "br.com.mjaraujo.grupodefamilia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678620152355-bbag2leckga2gu8u3an102lv1crp2iud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcE2ybQtC1DWNBBemib9SV2GwZP8bc980"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678620152355-bbag2leckga2gu8u3an102lv1crp2iud.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+        <item
+                android:id="@+id/nav_perfil"
+                android:icon="@drawable/ic_account_box_24px"
+                android:title="@string/meu_perfil"/>
+        <item
+                android:id="@+id/nav_avisos"
+                android:icon="@drawable/ic_message_24px"
+                android:title="@string/avisos"/>
+        <item
+                android:id="@+id/nav_pagamentos"
+                android:icon="@drawable/ic_money_off_24px"
+                android:title="@string/pagamentos"/>
+        <item
+                android:id="@+id/nav_agenda"
+                android:icon="@drawable/ic_calendar_today_24px"
+                android:title="@string/agenda"/>
+        <item
+                android:id="@+id/nav_financeiro"
+                android:icon="@drawable/ic_money_off_24px"
+                android:title="@string/title_financeiro"/>
+    </group>
+
+
+
+</menu>

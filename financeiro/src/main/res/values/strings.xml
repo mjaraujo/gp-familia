@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recursos">Recursos arrecadados</string>
+    <string name="mensalidades">Mensalidades</string>
+    <string name="doacoes">Doações</string>
+    <string name="outros">Outros</string>
+</resources>

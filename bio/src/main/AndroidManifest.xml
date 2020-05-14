@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    package="br.com.mjaraujo.bio">
+
+    <dist:module
+        dist:instant="false"
+        dist:title="@string/module_bio">
+        <dist:delivery>
+
+            <dist:install-time>
+                <dist:conditions>
+                    <dist:min-sdk dist:value="23" />
+                    <dist:device-feature dist:name="android.hardware.biometrics.BiometricManager" />
+                </dist:conditions>
+            </dist:install-time>
+        </dist:delivery>
+        <dist:fusing dist:include="true" />
+    </dist:module>
+
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+
+    <application android:allowBackup="true">
+        <activity android:name="br.com.mjaraujo.bio.installtime.AutenticacaoBioActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.View" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
