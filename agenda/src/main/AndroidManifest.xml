@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    package="br.com.mjaraujo.ondemmand.financeiro">
+    package="br.com.mjaraujo.dynamicfeature.ondemand">
 
     <dist:module
         dist:instant="false"
-        dist:title="@string/module_financeiro">
+        dist:title="@string/module_agenda">
         <dist:delivery>
             <dist:on-demand />
         </dist:delivery>
+
         <dist:fusing dist:include="true" />
     </dist:module>
 
     <application android:allowBackup="true">
-        <activity android:name="br.com.mjaraujo.grupodefamilia.ondemand.RecursosActivity">
+        <activity android:name="br.com.mjaraujo.grupodefamilia.ondemand.AgendaActivity">
             <intent-filter>
                 <action android:name="android.intent.action.View" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

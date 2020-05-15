@@ -5,9 +5,8 @@
 
     <dist:module
         dist:instant="false"
-        dist:title="@string/module_bio">
+        dist:title="@string/module_agenda">
         <dist:delivery>
-
             <dist:install-time>
                 <dist:conditions>
                     <dist:min-sdk dist:value="23" />

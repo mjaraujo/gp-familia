@@ -49,7 +49,7 @@ class PerfilActivity : AppCompatActivity() {
         txtCelular = findViewById(R.id.txtCelular)
         txtTelefone = findViewById(R.id.txtTelefone)
         txtLogradouro = findViewById(R.id.txtLogradouro)
-        txtNome = findViewById(R.id.txt_nome)
+        txtNome = findViewById(R.id.txt_nome_perfil)
         btnCancelar = findViewById(R.id.btnCancelar)
         btnConfirmar = findViewById(R.id.btnConfirmar)
         imgFoto = findViewById(R.id.img_foto)
@@ -280,7 +280,8 @@ class PerfilActivity : AppCompatActivity() {
                 val myRef = database.getReference("eitta")
 
                 myRef.setValue("Hello, World!").addOnCompleteListener {
-                    finish()
+                    val intent = Intent(this@PerfilActivity, MainActivity::class.java)
+                    startActivity(intent)
                 }.addOnFailureListener(OnFailureListener { exception ->
                     exception
                 })

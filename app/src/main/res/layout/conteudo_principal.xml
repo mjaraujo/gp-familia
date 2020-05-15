@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
             <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
                 <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Grupo de família"
-                        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
+                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Grupo de família" />
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
 
@@ -44,14 +46,14 @@
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/txt_nome"
+            app:layout_constraintBottom_toTopOf="@+id/txt_nome_perfil"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_account_box_24px" />
 
         <TextView
-            android:id="@+id/txt_nome"
+            android:id="@+id/txt_nome_perfil"
             style="@style/titulo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -78,7 +80,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_nome" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_nome_perfil" />
 
         <Switch
             android:id="@+id/swi_utilizar_bio"
@@ -94,19 +96,45 @@
             app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
         <ProgressBar
-            android:id="@+id/pbr_progress"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="105dp"
-            android:layout_height="100dp"
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/swi_utilizar_bio"
-            app:layout_constraintVertical_bias="0.486" />
+            app:layout_constraintTop_toBottomOf="@+id/swi_utilizar_bio" />
+
+        <TextView
+            android:id="@+id/progress_text"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/carregando"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="progress_text,progress_bar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="btnLogin" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

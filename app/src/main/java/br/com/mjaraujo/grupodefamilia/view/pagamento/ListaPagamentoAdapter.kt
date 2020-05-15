@@ -18,9 +18,9 @@ class ListaPagamentoAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = itens[position]
         holder?.let {
-            it.itemView.txt_mes.text = item.mes
+            it.itemView.txt_mes_evento.text = item.mes
             it.itemView.txt_valor.text = "R$ " + item.valor.toString() + ",00"
-            it.itemView.txt_data.text = "Dia " + item.dtPagamento
+            it.itemView.txt_data_evento.text = "Dia " + item.dtPagamento
         }
     }
 
@@ -35,9 +35,9 @@ class ListaPagamentoAdapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindView(mensalidade: Mensalidade) {
-            val mes = itemView.txt_mes
+            val mes = itemView.txt_mes_evento
             val valor = itemView.txt_valor
-            val dtPagamento = itemView.txt_data
+            val dtPagamento = itemView.txt_data_evento
 
             mes.text = mensalidade.mes
             dtPagamento.text = mensalidade.dtPagamento

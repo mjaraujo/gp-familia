@@ -37,4 +37,6 @@
     <string name="fechar">fechar</string>
     <string name="valor_total">Valor total</string>
     <string name="title_financeiro">Financeiro</string>
+    <string name="carregando">Carregando</string>
+    <string name="eventos">Eventos</string>
 </resources>

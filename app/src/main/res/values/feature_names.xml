@@ -2,4 +2,5 @@
 <resources>
     <string name="module_bio">bio</string>
     <string name="module_financeiro">financeiro</string>
+    <string name="module_agenda">agenda</string>
 </resources>

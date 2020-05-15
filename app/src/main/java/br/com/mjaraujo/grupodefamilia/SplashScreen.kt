@@ -13,15 +13,8 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         Handler().postDelayed(
-            Runnable
-            /*
-                     * Exibindo splash com um timer.
-                     */
-            { // Esse método será executado sempre que o timer acabar
-                // E inicia a activity principal
+            {
                 mostrarLogin()
-
-                // Fecha esta activity
                 finish()
             }, SPLASH_TIME_OUT.toLong()
         )

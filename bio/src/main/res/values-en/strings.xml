@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="autenticacao_biometrica">Biometrics authentication</string>
+    <string name="posicione_dedo">Put your finger on your device biometric sensor.</string>
+</resources>

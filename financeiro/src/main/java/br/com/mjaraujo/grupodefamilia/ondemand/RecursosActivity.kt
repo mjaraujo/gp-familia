@@ -1,9 +1,10 @@
-package br.com.mjaraujo.ondemmand.financeiro
+package br.com.mjaraujo.grupodefamilia.ondemand
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import br.com.mjaraujo.ondemmand.financeiro.R
 
 class RecursosActivity : AppCompatActivity() {
 

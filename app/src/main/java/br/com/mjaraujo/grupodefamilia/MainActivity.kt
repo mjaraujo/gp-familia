@@ -1,8 +1,6 @@
 package br.com.mjaraujo.grupodefamilia
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -15,6 +13,7 @@ import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.Group
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import br.com.mjaraujo.grupodefamilia.model.Pessoa
@@ -23,18 +22,16 @@ import br.com.mjaraujo.grupodefamilia.util.CpfCnpjValidator
 import br.com.mjaraujo.grupodefamilia.view.pagamento.MensalidadeActivity
 import br.com.mjaraujo.grupodefamilia.view.perfil.PerfilActivity
 import com.google.android.material.navigation.NavigationView
-import com.google.android.play.core.splitinstall.SplitInstallManager
-import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
-import com.google.android.play.core.splitinstall.SplitInstallRequest
+import com.google.android.play.core.splitinstall.*
+import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_perfil.*
 import java.io.Serializable
 import kotlin.system.exitProcess
 
 private const val PACKAGE_NAME = "br.com.mjaraujo.grupodefamilia.installtime"
-private const val PACKAGE_NAME_ON_DEMMAND = "br.com.mjaraujo.ondemmand.financeiro"
+private const val PACKAGE_NAME_ON_DEMMAND = "br.com.mjaraujo.grupodefamilia.ondemand"
 private const val FINANCEIRO_CLASSNAME = "$PACKAGE_NAME_ON_DEMMAND.RecursosActivity"
-
+private const val AGENDA_CLASSNAME = "$PACKAGE_NAME_ON_DEMMAND.AgendaActivity"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -47,26 +44,81 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var swiUtilizarBio: Switch
     lateinit var txtNome: TextView
     lateinit var imgFoto: ImageView
-    lateinit var pbProgress: ProgressBar
 
+    private lateinit var progress: Group
+    private lateinit var buttons: Group
+    private lateinit var progressBar: ProgressBar
+    private lateinit var progressText: TextView
     private lateinit var manager: SplitInstallManager
     private val moduleBio by lazy { getString(R.string.module_bio) }
     private val moduleFinanceiro by lazy { getString(R.string.module_financeiro) }
+    private val moduleAgenda by lazy { getString(R.string.module_agenda) }
     private lateinit var dataBase: DatabaseReference
 
-    private val CADASTRO_REQUEST = 1
+    private val listener = SplitInstallStateUpdatedListener { state ->
+        val multiInstall = state.moduleNames().size > 1
+        val names = state.moduleNames().joinToString(" - ")
+        when (state.status()) {
+            SplitInstallSessionStatus.DOWNLOADING -> {
+                //  In order to see this, the application has to be uploaded to the Play Store.
+                displayLoadingState(state, "Downloading $names")
+            }
+            SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
+                /*
+                  This may occur when attempting to download a sufficiently large module.
+
+                  In order to see this, the application has to be uploaded to the Play Store.
+                  Then features can be requested until the confirmation path is triggered.
+                 */
+                startIntentSender(state.resolutionIntent()?.intentSender, null, 0, 0, 0)
+            }
+            SplitInstallSessionStatus.INSTALLED -> {
+                onSuccessfulLoad(names, launch = !multiInstall)
+            }
+
+            SplitInstallSessionStatus.INSTALLING -> displayLoadingState(state, "Installing $names")
+            SplitInstallSessionStatus.FAILED -> {
+                Toast.makeText(
+                    this,
+                    "Error: ${state.errorCode()} for module ${state.moduleNames()}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    override fun onResume() {
+        // Listener can be registered even without directly triggering a download.
+        manager.registerListener(listener)
+        super.onResume()
+    }
+
+    override fun onPause() {
+        // Make sure to dispose of the listener once it's no longer needed.
+        manager.unregisterListener(listener)
+        super.onPause()
+    }
+
+    private fun displayLoadingState(state: SplitInstallSessionState, message: String) {
+        displayProgress()
+
+        progressBar.max = state.totalBytesToDownload().toInt()
+        progressBar.progress = state.bytesDownloaded().toInt()
+
+        updateProgressMessage(message)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        txtNome = findViewById(R.id.txt_nome)
+        txtNome = findViewById(R.id.txt_nome_perfil)
         toolbar = findViewById(R.id.toolbar)
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
         btnLogin = findViewById(R.id.btnLogin)
         swiUtilizarBio = findViewById(R.id.swi_utilizar_bio)
-        pbProgress = findViewById(R.id.pbr_progress)
+        progress = findViewById(R.id.progress)
         imgFoto = findViewById(R.id.img_perfil)
         setSupportActionBar(toolbar)
 
@@ -91,8 +143,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun initViews() {
+        buttons = findViewById(R.id.buttons)
+        progress = findViewById(R.id.progress)
+        progressBar = findViewById(R.id.progress_bar)
+        progressText = findViewById(R.id.progress_text)
 
-        pbProgress.visibility = View.INVISIBLE
+        setupClickListener()
+        progress.visibility = View.INVISIBLE
         navView.setNavigationItemSelectedListener(this)
 
         val bioInstalled: Boolean = manager.installedModules.contains(moduleBio)
@@ -115,13 +172,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .setMessage(R.string.primeiro_acesso_info)
                 .setView(input)
                 .setCancelable(false)
-                .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
+                .setPositiveButton(
+                    android.R.string.ok,
+                    null
+                ) //Set to null. We override the onclick
                 .setNegativeButton(android.R.string.cancel, null)
                 .create()
 
             dialog.setOnShowListener {
                 var cpf: String? = null
-                val buttonPositive = (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
+                val buttonPositive =
+                    (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
                 buttonPositive.setText(R.string.continuar)
                 buttonPositive.setOnClickListener {
                     cpf = input.text.toString()
@@ -139,7 +200,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                 }
 
-                val buttonCancel = (dialog as AlertDialog).getButton(AlertDialog.BUTTON_NEGATIVE)
+                val buttonCancel =
+                    (dialog as AlertDialog).getButton(AlertDialog.BUTTON_NEGATIVE)
                 buttonCancel.setOnClickListener {
                     finishAffinity()
                     moveTaskToBack(true)
@@ -153,6 +215,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         setupClickListener()
+    }
+
+    private fun updateProgressMessage(message: String) {
+        if (progress.visibility != View.VISIBLE) displayProgress()
+        progressText.text = message
+    }
+
+    /** Display progress bar and text. */
+    private fun displayProgress() {
+        progress.visibility = View.VISIBLE
+        buttons.visibility = View.GONE
+    }
+
+    /** Display buttons to accept user input. */
+    private fun displayButtons() {
+        progress.visibility = View.GONE
+        buttons.visibility = View.VISIBLE
     }
 
     fun verificarCpf(pessoa: Pessoa, isInDevice: Boolean) {
@@ -171,7 +250,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (data in dataSnapshot.children) {
-                        pbProgress.setVisibility(View.INVISIBLE)
+                        progress.setVisibility(View.INVISIBLE)
                         if (pessoa.cpf.toString().equals(data.child("cpf").value)) {
                             cpfCadastrado = true
                             pessoa.logradouro = data.child("logradouro").value as String
@@ -259,7 +338,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val intent = Intent(this@MainActivity, PerfilActivity::class.java)
                 intent.putExtra("pessoa", pessoa as Serializable)
                 intent.putExtra("novo", true)
-                startActivityForResult(intent, CADASTRO_REQUEST)
+                startActivity(intent)
                 dialog.dismiss()
                 finish()
             }
@@ -276,9 +355,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setupClickListener() {
         setClickListener(R.id.btnLogin, clickListener)
-        /*setClickListener(R.id.btn_load_java, clickListener)
-        setClickListener(R.id.btn_load_assets, clickListener)
-        setClickListener(R.id.btn_load_native, clickListener)*/
     }
 
     private fun setClickListener(id: Int, listener: View.OnClickListener) {
@@ -306,18 +382,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun loadAndLaunchModule(name: String) {
 
-        // Skip loading if the module already is installed. Perform success action directly.
         if (manager.installedModules.contains(name)) {
             onSuccessfulLoad(name, launch = true)
             return
         }
 
-        // Create request to install a feature module by name.
         val request = SplitInstallRequest.newBuilder()
             .addModule(name)
             .build()
 
-        // Load and install the requested feature module.
         manager.startInstall(request)
     }
 
@@ -325,11 +398,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (launch) {
             when (moduleName) {
 
-                moduleFinanceiro -> launchActivity(FINANCEIRO_CLASSNAME)/*
-                 moduleJava -> launchActivity(JAVA_SAMPLE_CLASSNAME)
-                 moduleNative -> launchActivity(NATIVE_SAMPLE_CLASSNAME)
-                 moduleAssets -> displayAssets()
-                 instantModule -> launchActivity(INSTANT_SAMPLE_CLASSNAME)*/
+                moduleFinanceiro -> launchActivity(FINANCEIRO_CLASSNAME)
+                moduleAgenda -> launchActivity(AGENDA_CLASSNAME)
             }
         }
     }
@@ -359,7 +429,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
             R.id.nav_agenda -> {
-                Toast.makeText(this, "Update clicked", Toast.LENGTH_SHORT).show()
+                loadAndLaunchModule(resources.getString(R.string.module_agenda))
             }
             R.id.nav_financeiro -> {
                 loadAndLaunchModule(resources.getString(R.string.module_financeiro))
@@ -376,15 +446,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CADASTRO_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-
-            }
-        }
-    }
-
 
 }

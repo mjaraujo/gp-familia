@@ -35,4 +35,8 @@
     <string name="inicializando_aplicacao">Inicializando a aplicação</string>
     <string name="verificando_informacoes">Verificando informações de acesso</string>
     <string name="fechar">fechar</string>
+    <string name="carregando">Carregando</string>
+    <string name="eventos">Eventos</string>
+    <string name="valor_total">Valor total</string>
+    <string name="title_financeiro">Financeiro</string>
 </resources>
