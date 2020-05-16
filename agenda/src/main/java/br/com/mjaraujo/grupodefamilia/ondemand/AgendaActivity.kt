@@ -3,6 +3,8 @@ package br.com.mjaraujo.grupodefamilia.ondemand
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,15 +13,27 @@ import br.com.mjaraujo.dynamicfeature.agenda.model.Evento
 import br.com.mjaraujo.dynamicfeature.agenda.model.Mes
 import br.com.mjaraujo.dynamicfeature.ondemand.R
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AgendaActivity : AppCompatActivity() {
     lateinit var recyclerView: RecyclerView
+    lateinit var btnFechar: Button
     var listMeses: ArrayList<Mes> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_agenda)
+        btnFechar = findViewById(R.id.btn_fechar_agenda)
+        bntFecharClick()
         requestMeses()
+    }
+
+    private fun bntFecharClick() {
+        btnFechar.setOnClickListener {
+            finish()
+        }
     }
 
     private fun initRecycler() {
@@ -28,7 +42,7 @@ class AgendaActivity : AppCompatActivity() {
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@AgendaActivity, RecyclerView.VERTICAL, false)
 
-            adapter = MesAdapter(listMeses.toList())
+            adapter = MesAdapter(listMeses.sorted().toList())
         }
 
     }
@@ -60,12 +74,15 @@ class AgendaActivity : AppCompatActivity() {
                             )
                             eventos.add(evento)
                         }
+                        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
                         val mes: Mes = Mes(
                             nomeMes,
+                            formatter.parse(eventos.get(0).data.replaceRange(0, 1, "01")),
                             eventos
                         )
                         listMeses.add(mes)
                     }
+
                     dialog.dismiss()
                     initRecycler()
                 }

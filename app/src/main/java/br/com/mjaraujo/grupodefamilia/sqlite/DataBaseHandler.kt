@@ -12,6 +12,7 @@ val TABLENAME = "Pessoas"
 val COL_NOME = "nome"
 val COL_ID = "id"
 val COL_CPF = "cpf"
+val COL_SENHA = "senha"
 
 class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
     context, DATABASENAME, null,
@@ -19,7 +20,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
 ) {
     override fun onCreate(db: SQLiteDatabase?) {
         val createTable =
-            "CREATE TABLE " + TABLENAME + " (" + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_NOME + " VARCHAR(256)," + COL_CPF + " VARCHAR(256))"
+            "CREATE TABLE " + TABLENAME + " (" + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_NOME + " VARCHAR(256)," + COL_CPF + " VARCHAR(256)," + COL_SENHA + " VARCHAR(256))"
         db?.execSQL(createTable)
     }
 
@@ -32,11 +33,26 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
         val contentValues = ContentValues()
         contentValues.put(COL_NOME, pessoa.nome)
         contentValues.put(COL_CPF, pessoa.cpf)
+        contentValues.put(COL_SENHA, pessoa.senha)
         val result = database.insert(TABLENAME, null, contentValues)
         if (result == (0).toLong()) {
             Toast.makeText(context, "Falha ao registrar usuário", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(context, "Usuário registrado com sucesso", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun updateData(pessoa: Pessoa) {
+        val database = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(COL_NOME, pessoa.nome)
+        contentValues.put(COL_CPF, pessoa.cpf)
+        contentValues.put(COL_SENHA, pessoa.senha)
+        val result = database.update(TABLENAME, contentValues, "id = 1", null)
+        if (result == 0) {
+            Toast.makeText(context, "Falha ao registrar usuário", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Usuário atualizado com sucesso", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -51,6 +67,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
                 user.id = result.getInt(result.getColumnIndex(COL_ID)).toString()
                 user.nome = result.getString(result.getColumnIndex(COL_NOME))
                 user.cpf = result.getString(result.getColumnIndex(COL_CPF)).toString()
+                user.senha = result.getString(result.getColumnIndex(COL_SENHA)).toString()
                 list.add(user)
             } while (result.moveToNext())
         }

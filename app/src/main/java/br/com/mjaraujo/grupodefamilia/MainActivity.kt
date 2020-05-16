@@ -1,5 +1,6 @@
 package br.com.mjaraujo.grupodefamilia
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
@@ -7,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.text.InputType
 import android.util.Base64
+import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
@@ -19,24 +21,34 @@ import androidx.drawerlayout.widget.DrawerLayout
 import br.com.mjaraujo.grupodefamilia.model.Pessoa
 import br.com.mjaraujo.grupodefamilia.sqlite.DataBaseHandler
 import br.com.mjaraujo.grupodefamilia.util.CpfCnpjValidator
+import br.com.mjaraujo.grupodefamilia.view.login.LoginActivity
 import br.com.mjaraujo.grupodefamilia.view.pagamento.MensalidadeActivity
 import br.com.mjaraujo.grupodefamilia.view.perfil.PerfilActivity
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitinstall.*
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.conteudo_principal.*
 import java.io.Serializable
 import kotlin.system.exitProcess
+
 
 private const val PACKAGE_NAME = "br.com.mjaraujo.grupodefamilia.installtime"
 private const val PACKAGE_NAME_ON_DEMMAND = "br.com.mjaraujo.grupodefamilia.ondemand"
 private const val FINANCEIRO_CLASSNAME = "$PACKAGE_NAME_ON_DEMMAND.RecursosActivity"
 private const val AGENDA_CLASSNAME = "$PACKAGE_NAME_ON_DEMMAND.AgendaActivity"
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+    LoginActivity.ICredentialsDialogListener {
+
+    companion object {
+        private const val REQUEST_RESULT = 1
+    }
 
     private var pessoa: Pessoa = Pessoa()
     private var primeiroAcesso: Boolean = false
+    private var loginRealizado: Boolean = false
     lateinit var toolbar: Toolbar
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
@@ -136,8 +148,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (bundle != null) {
             val pessoaCallBack = intent.extras?.get("pessoa") as Pessoa
             this.pessoa = pessoaCallBack
+            loginRealizado = true
         }
 
+        if (loginRealizado) {
+            btnLogin.visibility = View.INVISIBLE
+        } else {
+            btnLogin.visibility = View.VISIBLE
+        }
         updateComponents()
 
     }
@@ -211,6 +229,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             dialog.show()
         } else {
             pessoa.cpf = data[0].cpf
+            pessoa.senha = data[0].senha
             verificarCpf(pessoa, true)
         }
 
@@ -264,8 +283,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                     if (cpfCadastrado) {
                         updateComponents()
-                        val db = DataBaseHandler(applicationContext)
-                        db.insertData(pessoa)
+                        if (!isInDevice) {
+                            val intent = Intent(this@MainActivity, PerfilActivity::class.java)
+                            intent.putExtra("pessoa", pessoa as Serializable)
+                            intent.putExtra("novo", true)
+                            startActivity(intent)
+                        }
                     } else {
                         solicitarCadastro(pessoa)
                     }
@@ -367,16 +390,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun btnLoginClick() {
         val bioInstalled: Boolean = manager.installedModules.contains(moduleBio)
+
         if (bioInstalled && swiUtilizarBio.isChecked) {
             val intent = Intent()
             intent.setClassName(
                 packageName,
                 "br.com.mjaraujo.bio.installtime.AutenticacaoBioActivity"
             )
-            startActivity(intent)
+            startActivityForResult(intent, 1)
 
         } else {
-            Toast.makeText(this, "não instalado", Toast.LENGTH_SHORT).show()
+            val dialog = LoginActivity()
+            dialog.show(supportFragmentManager, "credentialsDialog")
         }
     }
 
@@ -413,31 +438,35 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_perfil -> {
-                val intent = Intent(this, PerfilActivity::class.java)
-                intent.putExtra("novo", false)
-                intent.putExtra("pessoa", pessoa as Serializable)
-                startActivity(intent)
-                finish()
+        if (loginRealizado) {
+            when (item.itemId) {
+                R.id.nav_perfil -> {
+                    val intent = Intent(this, PerfilActivity::class.java)
+                    intent.putExtra("novo", false)
+                    intent.putExtra("pessoa", pessoa as Serializable)
+                    startActivity(intent)
+                    finish()
+                }
+                R.id.nav_pagamentos -> {
+                    val intent = Intent(this, MensalidadeActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_agenda -> {
+                    loadAndLaunchModule(resources.getString(R.string.module_agenda))
+                }
+                R.id.nav_financeiro -> {
+                    loadAndLaunchModule(resources.getString(R.string.module_financeiro))
+                }
             }
-            R.id.nav_avisos -> {
-
-            }
-            R.id.nav_pagamentos -> {
-                val intent = Intent(this, MensalidadeActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.nav_agenda -> {
-                loadAndLaunchModule(resources.getString(R.string.module_agenda))
-            }
-            R.id.nav_financeiro -> {
-                loadAndLaunchModule(resources.getString(R.string.module_financeiro))
-            }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            return true
+        } else {
+            Toast.makeText(this, resources.getString(R.string.login_necessario), Toast.LENGTH_SHORT)
+                .show()
+            return false
         }
-        drawerLayout.closeDrawer(GravityCompat.START)
-        return true
     }
+
 
     private val clickListener by lazy {
         View.OnClickListener {
@@ -446,5 +475,42 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
+
+    override fun onDialogPositiveClick(password: String?) {
+        val db = DataBaseHandler(applicationContext)
+        val data = db.readData()
+        if (data[0].senha.equals(password)) {
+            loginRealizado = true
+            Toast.makeText(
+                this,
+                resources.getString(R.string.usuario_autenticado),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            val sb: Snackbar =
+                Snackbar.make(layout_conteudo, R.string.senha_invalida, Snackbar.LENGTH_LONG)
+            val view = sb.view
+            val tv =
+                view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
+            tv.setTextColor(resources.getColor(R.color.colorPrimaryDark))
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, 35.0F)
+            sb.show()
+        }
+    }
+
+    override fun onDialogNegativeClick() {
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_RESULT) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                loginRealizado = true
+            }
+        }
+    }
+
 
 }

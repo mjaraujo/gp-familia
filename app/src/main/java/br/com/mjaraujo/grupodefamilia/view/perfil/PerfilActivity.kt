@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
@@ -17,14 +16,12 @@ import br.com.mjaraujo.grupodefamilia.R
 import br.com.mjaraujo.grupodefamilia.model.Pessoa
 import br.com.mjaraujo.grupodefamilia.model.TipoLogradouro
 import br.com.mjaraujo.grupodefamilia.sqlite.DataBaseHandler
-import br.com.mjaraujo.grupodefamilia.util.CpfCnpjValidator
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_perfil.*
 import java.io.ByteArrayOutputStream
 import java.io.Serializable
-import kotlin.system.exitProcess
 
 
 class PerfilActivity : AppCompatActivity() {
@@ -36,6 +33,7 @@ class PerfilActivity : AppCompatActivity() {
     lateinit var txtNome: TextView
     lateinit var txtTelefone: TextView
     lateinit var txtCelular: TextView
+    lateinit var txtSenha: TextView
     lateinit var txtLogradouro: TextView
     lateinit var btnCancelar: Button
     lateinit var btnConfirmar: Button
@@ -52,6 +50,7 @@ class PerfilActivity : AppCompatActivity() {
         txtNome = findViewById(R.id.txt_nome_perfil)
         btnCancelar = findViewById(R.id.btnCancelar)
         btnConfirmar = findViewById(R.id.btnConfirmar)
+        txtSenha = findViewById(R.id.txt_senha_perfil)
         imgFoto = findViewById(R.id.img_foto)
 
         dataBase = FirebaseDatabase.getInstance().getReference("pessoas")
@@ -78,7 +77,7 @@ class PerfilActivity : AppCompatActivity() {
         txtCelular.text = pessoa.celular
         txtLogradouro.text = pessoa.logradouro
         txtTelefone.text = pessoa.telefone
-
+        txtSenha.text = pessoa.senha
         if (pessoa.tipoLogradouro?.isNotEmpty()!!) {
             val ordinal = TipoLogradouro.fromValue(pessoa.tipoLogradouro.toString()).ordinal
             spnTipoLogradouro.setSelection(ordinal)
@@ -145,29 +144,66 @@ class PerfilActivity : AppCompatActivity() {
 
         btnConfirmar.setOnClickListener {
             btnConfirmar.isClickable = false
-            val bitmap = imgFoto.drawable.toBitmap()
-            val stream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            val encodedString: String = android.util.Base64.encodeToString(
-                stream.toByteArray(),
-                android.util.Base64.DEFAULT
-            )
-            pessoa.foto = encodedString
-            if (modoAdicao) {
-                writeNewPessoa(
-                    txtCpf.text.toString(),
-                    txtNome.text.toString(),
-                    txtTelefone.text.toString(),
-                    txtCelular.text.toString(),
-                    txtLogradouro.text.toString(),
-                    spnTipoLogradouro.selectedItem as String,
-                    encodedString
-                )
-            } else {
-                updatePessoa()
-            }
 
+            if (informacoesCompletas()) {
+                val bitmap = imgFoto.drawable.toBitmap()
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                val encodedString: String = android.util.Base64.encodeToString(
+                    stream.toByteArray(),
+                    android.util.Base64.DEFAULT
+                )
+                pessoa.foto = encodedString
+                if (modoAdicao) {
+                    writeNewPessoa(
+                        txtCpf.text.toString(),
+                        txtNome.text.toString(),
+                        txtTelefone.text.toString(),
+                        txtCelular.text.toString(),
+                        txtLogradouro.text.toString(),
+                        spnTipoLogradouro.selectedItem.toString(),
+                        txtSenha.text.toString(),
+                        encodedString
+
+                    )
+
+                } else {
+                    updatePessoa()
+                }
+            } else {
+                btnConfirmar.isClickable = true
+            }
         }
+    }
+
+    private fun informacoesCompletas(): Boolean {
+        var problemas: String = ""
+        if (txtCelular.text.toString().isEmpty()) {
+            problemas += "\n" + resources.getString(R.string.celular_nao_informado)
+        }
+        if (txtLogradouro.text.toString().isEmpty()) {
+            problemas += "\n" + resources.getString(R.string.logradouro_nao_informado)
+        }
+        if (txtNome.text.toString().isEmpty()) {
+            problemas += "\n" + resources.getString(R.string.nome_nao_informado)
+        }
+        if (txtTelefone.text.toString().isEmpty()) {
+            problemas += "\n" + resources.getString(R.string.telefone_nao_informado)
+        }
+        if (txtSenha.text.toString().isEmpty()) {
+            problemas += "\n" + resources.getString(R.string.senha_nao_informada)
+        }
+
+        if (problemas.isNotEmpty()) {
+            val dialog: AlertDialog = AlertDialog.Builder(this)
+                .setTitle(R.string.informacoes_incompletas)
+                .setMessage(problemas)
+                .setPositiveButton(android.R.string.ok, null)
+                .create()
+            dialog.show()
+            return false
+        }
+        return true
     }
 
     private fun updatePessoa() {
@@ -191,20 +227,23 @@ class PerfilActivity : AppCompatActivity() {
                             pessoa.logradouro = txtLogradouro.text.toString()
                             pessoa.celular = txtCelular.text.toString()
                             pessoa.telefone = txtTelefone.text.toString()
+                            pessoa.senha = txtSenha.text.toString()
                             val childUpdates = HashMap<String, Any>()
                             childUpdates.put("/pessoas/" + data.key, pessoa)
-                            database.reference.updateChildren(childUpdates).addOnCompleteListener {
-                                Toast.makeText(
-                                    this@PerfilActivity,
-                                    resources.getString(R.string.informacoes_atualizadas),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                val intent = Intent(this@PerfilActivity, MainActivity::class.java)
-                                intent.putExtra("pessoa", pessoa as Serializable)
-                                startActivity(intent)
-                                dialog.dismiss()
-                                finish()
-                            }
+                            database.reference.updateChildren(childUpdates)
+                                .addOnCompleteListener {
+                                    Toast.makeText(
+                                        this@PerfilActivity,
+                                        resources.getString(R.string.informacoes_atualizadas),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    val intent =
+                                        Intent(this@PerfilActivity, MainActivity::class.java)
+                                    intent.putExtra("pessoa", pessoa as Serializable)
+                                    startActivity(intent)
+                                    dialog.dismiss()
+                                    finish()
+                                }
                         }
                     }
                 }
@@ -225,6 +264,7 @@ class PerfilActivity : AppCompatActivity() {
         celular: String,
         logradouro: String,
         tipoLogradouro: String,
+        senha: String,
         foto: String
     ) {
         val input = ProgressBar(this)
@@ -244,16 +284,23 @@ class PerfilActivity : AppCompatActivity() {
             celular,
             logradouro,
             tipoLogradouro,
+            senha,
             foto
         )
 
-
+        val db = DataBaseHandler(applicationContext)
+        val data = db.readData()
+        if (data.size == 0) {
+            db.insertData(pessoa)
+        } else {
+            db.updateData(pessoa)
+        }
         dataBase.child(pessoaId.toString()).setValue(pessoa).addOnCompleteListener(
             OnCompleteListener {
-                val db = DataBaseHandler(applicationContext)
-                db.insertData(pessoa)
+
                 Toast.makeText(
                     this,
+
                     resources.getString(R.string.informacoes_atualizadas),
                     Toast.LENGTH_SHORT
                 ).show()
@@ -274,22 +321,12 @@ class PerfilActivity : AppCompatActivity() {
     }
 
     private fun btnCancelarClick() {
-        btnCancelar.setOnClickListener(
-            View.OnClickListener {
-                val database = FirebaseDatabase.getInstance()
-                val myRef = database.getReference("eitta")
-
-                myRef.setValue("Hello, World!").addOnCompleteListener {
-                    val intent = Intent(this@PerfilActivity, MainActivity::class.java)
-                    startActivity(intent)
-                }.addOnFailureListener(OnFailureListener { exception ->
-                    exception
-                })
-
-
-            }
-
-        )
+        btnCancelar.setOnClickListener {
+            val intent = Intent(this@PerfilActivity, MainActivity::class.java)
+            intent.putExtra("pessoa", pessoa as Serializable)
+            startActivity(intent)
+            finish()
+        }
     }
 
 }

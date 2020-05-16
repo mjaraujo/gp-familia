@@ -8,17 +8,24 @@ import android.hardware.fingerprint.FingerprintManager
 import android.os.CancellationSignal
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import br.com.mjaraujo.grupodefamilia.view.login.LoginActivity
 
 @SuppressLint("ByteOrderMark")
 class FingerprintHelper(private val appContext: Context) :
     FingerprintManager.AuthenticationCallback() {
+    private var listener: IAutenticacaoBio? = null
+
+    interface IAutenticacaoBio {
+        fun onAutenticado()
+    }
+
     lateinit var cancellationSignal: CancellationSignal
 
     fun startAuth(
         manager: FingerprintManager,
         cryptoObject: FingerprintManager.CryptoObject
     ) {
-
+        listener = appContext as IAutenticacaoBio
         cancellationSignal = CancellationSignal()
 
         if (ActivityCompat.checkSelfPermission(
@@ -65,11 +72,6 @@ class FingerprintHelper(private val appContext: Context) :
     override fun onAuthenticationSucceeded(
         result: FingerprintManager.AuthenticationResult
     ) {
-
-        Toast.makeText(
-            appContext,
-            "Authentication succeeded.",
-            Toast.LENGTH_LONG
-        ).show()
+        listener?.onAutenticado()
     }
 }

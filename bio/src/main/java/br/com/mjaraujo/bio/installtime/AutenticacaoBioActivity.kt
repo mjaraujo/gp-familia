@@ -3,6 +3,7 @@ package br.com.mjaraujo.bio.installtime
 import android.Manifest
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.fingerprint.FingerprintManager
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,7 @@ import android.security.keystore.KeyProperties
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import br.com.mjaraujo.bio.R
+import br.com.mjaraujo.grupodefamilia.MainActivity
 import java.io.IOException
 import java.security.*
 import java.security.cert.CertificateException
@@ -21,7 +23,15 @@ import javax.crypto.KeyGenerator
 import javax.crypto.NoSuchPaddingException
 import javax.crypto.SecretKey
 
-class AutenticacaoBioActivity : AppCompatActivity() {
+class AutenticacaoBioActivity : AppCompatActivity(), FingerprintHelper.IAutenticacaoBio {
+
+    companion object {
+        const val RESULT_ID = "id"
+        const val RESULT_NAME = "name"
+        fun newInstance(context: Context) = Intent(context, MainActivity::class.java)
+    }
+
+
     private lateinit var keyStore: KeyStore
     private lateinit var fingerprintManager: FingerprintManager
     private lateinit var keyGenerator: KeyGenerator
@@ -170,5 +180,21 @@ class AutenticacaoBioActivity : AppCompatActivity() {
             return false
         }
         return true
+    }
+
+    override fun onAutenticado() {
+        Toast.makeText(
+            this@AutenticacaoBioActivity,
+            "Usuário autenticado",
+            Toast.LENGTH_LONG
+        ).show()
+
+        val data = Intent().apply {
+            putExtra(RESULT_ID, 1)
+            putExtra(RESULT_NAME, "aut_bio")
+        }
+        setResult(RESULT_OK, data)
+        finish()
+
     }
 }

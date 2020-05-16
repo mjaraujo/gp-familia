@@ -13,6 +13,7 @@ data class Pessoa(
     var celular: String? = "",
     var logradouro: String? = "",
     var tipoLogradouro: String? = "",
+    var senha: String? = "",
     var foto: String? = ""
 ) : Serializable {
     @Exclude
@@ -24,6 +25,7 @@ data class Pessoa(
             "celular" to celular,
             "logradouro" to logradouro,
             "tipoLogradouro" to tipoLogradouro,
+            "senha" to senha,
             "foto" to foto
         )
     }

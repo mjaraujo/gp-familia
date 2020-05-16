@@ -39,4 +39,13 @@
     <string name="eventos">Eventos</string>
     <string name="valor_total">Valor total</string>
     <string name="title_financeiro">Financeiro</string>
+    <string name="login_necessario">Primeiramente realize login no sistema.</string>
+    <string name="preencha_dados">Preencha os dados</string>
+    <string name="senha">Senha</string>
+    <string name="informe_senha">Informe sua senha para continuar</string>
+    <string name="usuario_autenticado">Usuário autenticado</string>
+    <string name="celular_nao_informado">Celular não informado</string>
+    <string name="logradouro_nao_informado">Logradouro não informado</string>
+    <string name="telefone_nao_informado">Telefone não informado</string>
+    <string name="informacoes_incompletas">Informações incompletas</string>
 </resources>

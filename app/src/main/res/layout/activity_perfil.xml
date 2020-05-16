@@ -1,116 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".view.perfil.PerfilActivity" android:background="@color/colorPrimaryDark">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".view.perfil.PerfilActivity">
 
     <TextView
-            android:text="@string/meu_perfil"
-            style="@style/titulo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" android:id="@+id/txtTitulo"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"/>
+        android:id="@+id/txtTitulo"
+        style="@style/titulo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/meu_perfil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
-            android:text="@string/nome"
-            style="@style/lblItem"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" android:id="@+id/textView2"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="@+id/edtTelefone"
-            app:layout_constraintTop_toTopOf="@+id/txt_nome_perfil" app:layout_constraintBottom_toBottomOf="@+id/txt_nome_perfil"/>
+        android:id="@+id/textView2"
+        style="@style/lblItem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/nome"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_nome_perfil"
+        app:layout_constraintEnd_toEndOf="@+id/edtTelefone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txt_nome_perfil" />
+
     <TextView
-            android:text="@string/telefone"
-            style="@style/lblItem"
-            android:id="@+id/edtTelefone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/txtTelefone"
-            app:layout_constraintBottom_toBottomOf="@+id/txtTelefone" android:layout_width="130dp"/>
+        android:id="@+id/edtTelefone"
+        style="@style/lblItem"
+        android:layout_width="130dp"
+        android:text="@string/telefone"
+        app:layout_constraintBottom_toBottomOf="@+id/txtTelefone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtTelefone" />
+
     <TextView
-            android:text="@string/celular"
-            style="@style/lblItem"
-            android:id="@+id/textView4"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="@+id/edtTelefone"
-            app:layout_constraintBottom_toBottomOf="@+id/txtCelular" app:layout_constraintTop_toTopOf="@+id/txtCelular"/>
+        android:id="@+id/textView4"
+        style="@style/lblItem"
+        android:layout_marginStart="8dp"
+        android:text="@string/celular"
+        app:layout_constraintBottom_toBottomOf="@+id/txtCelular"
+        app:layout_constraintEnd_toEndOf="@+id/edtTelefone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtCelular" />
+
     <ImageView
-            android:layout_width="198dp"
-            android:layout_height="154dp" app:srcCompat="@drawable/ic_account_box_24px"
-            android:id="@+id/img_foto" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/txtTitulo" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="24dp" app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="24dp"/>
+        android:id="@+id/img_foto"
+        android:layout_width="198dp"
+        android:layout_height="154dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTitulo"
+        app:srcCompat="@drawable/ic_account_box_24px" />
+
     <Spinner
-            style="@style/lblItem"
-            android:id="@+id/spnTipoLogradouro"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp"
-            app:layout_constraintTop_toTopOf="@+id/txtLogradouro"
-            app:layout_constraintBottom_toBottomOf="@+id/txtLogradouro"
-            app:layout_constraintEnd_toEndOf="@+id/edtTelefone" android:foregroundTint="@color/colorPrimary"/>
+        android:id="@+id/spnTipoLogradouro"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/txtLogradouro"
+        app:layout_constraintEnd_toEndOf="@+id/edtTelefone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtLogradouro" />
+
     <EditText
-            style="@style/txtItem"
-            android:inputType="textPersonName"
-            android:hint="@string/logradouro"
-            android:ems="10"
-            android:id="@+id/txtLogradouro"
-            app:layout_constraintTop_toBottomOf="@+id/txtCelular"
-            app:layout_constraintStart_toEndOf="@+id/spnTipoLogradouro" android:layout_marginStart="8dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintHorizontal_bias="1.0"/>
+        android:id="@+id/txtLogradouro"
+        style="@style/txtItem"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/logradouro"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/spnTipoLogradouro"
+        app:layout_constraintTop_toBottomOf="@+id/txtCelular" />
+
     <EditText
-            android:inputType="textPersonName"
-            style="@style/txtItem"
-            android:ems="10"
-            android:id="@+id/txt_nome_perfil"
-            app:layout_constraintStart_toEndOf="@+id/textView2"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginStart="8dp"
-            android:hint="@string/nome"
-            app:layout_constraintHorizontal_bias="0.0" app:layout_constraintTop_toBottomOf="@+id/txtCpf"/>
+        android:id="@+id/txt_nome_perfil"
+        style="@style/txtItem"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/nome"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/txtCpf" />
+
     <EditText
-            android:inputType="phone"
-            style="@style/txtItem"
-            android:hint="@string/telefone"
-            android:ems="10"
-            android:id="@+id/txtTelefone"
-            app:layout_constraintTop_toBottomOf="@+id/txt_nome_perfil" android:layout_marginTop="8dp"
-            app:layout_constraintStart_toEndOf="@+id/edtTelefone" app:layout_constraintEnd_toEndOf="parent"/>
+        android:id="@+id/txtTelefone"
+        style="@style/txtItem"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/telefone"
+        android:inputType="phone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edtTelefone"
+        app:layout_constraintTop_toBottomOf="@+id/txt_nome_perfil" />
+
     <EditText
-            style="@style/txtItem"
-            android:inputType="textPersonName"
-            android:hint="@string/celular"
-            android:ems="10"
-            android:id="@+id/txtCelular"
-            app:layout_constraintTop_toBottomOf="@+id/txtTelefone" app:layout_constraintStart_toEndOf="@+id/textView4"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp" android:layout_marginTop="8dp"
-            app:layout_constraintHorizontal_bias="0.0"/>
+        android:id="@+id/txtCelular"
+        style="@style/txtItem"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/celular"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/txtTelefone" />
+
     <Button
-            android:text="@string/Cancelar"
-            style="@style/botao"
-            android:id="@+id/btnCancelar"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/txtLogradouro" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toStartOf="@+id/btnConfirmar"
-            android:layout_marginEnd="8dp"/>
+        android:id="@+id/btnCancelar"
+        style="@style/botao"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/Cancelar"
+        app:layout_constraintEnd_toStartOf="@+id/btnConfirmar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_senha_perfil" />
+
     <Button
-            android:text="@string/confirmar"
-            style="@style/botao"
-            android:id="@+id/btnConfirmar"
-            android:layout_marginStart="8dp" app:layout_constraintStart_toEndOf="@+id/btnCancelar"
-            android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/txtLogradouro"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
+        android:id="@+id/btnConfirmar"
+        style="@style/botao"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/confirmar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnCancelar"
+        app:layout_constraintTop_toBottomOf="@+id/txt_senha_perfil" />
+
     <TextView
-            android:text="@string/cpf"
-            style="@style/lblItem"
-            android:id="@+id/tx_mes_agenda"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/txtCpf" app:layout_constraintBottom_toBottomOf="@+id/txtCpf"
-            app:layout_constraintEnd_toEndOf="@+id/edtTelefone" android:layout_marginStart="8dp"/>
+        android:id="@+id/tx_mes_agenda"
+        style="@style/lblItem"
+        android:layout_marginStart="8dp"
+        android:text="@string/cpf"
+        app:layout_constraintBottom_toBottomOf="@+id/txtCpf"
+        app:layout_constraintEnd_toEndOf="@+id/edtTelefone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtCpf" />
 
     <EditText
         android:id="@+id/txtCpf"
@@ -124,5 +168,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tx_mes_agenda"
         app:layout_constraintTop_toBottomOf="@+id/img_foto" />
+
+    <TextView
+        android:id="@+id/textView"
+        style="@style/lblItem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/senha"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_senha_perfil"
+        app:layout_constraintEnd_toEndOf="@+id/edtTelefone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txt_senha_perfil" />
+
+    <EditText
+        android:id="@+id/txt_senha_perfil"
+        style="@style/txtItem"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/senha"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/txtLogradouro" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

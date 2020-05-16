@@ -7,10 +7,6 @@
                 android:icon="@drawable/ic_account_box_24px"
                 android:title="@string/meu_perfil"/>
         <item
-                android:id="@+id/nav_avisos"
-                android:icon="@drawable/ic_message_24px"
-                android:title="@string/avisos"/>
-        <item
                 android:id="@+id/nav_pagamentos"
                 android:icon="@drawable/ic_money_off_24px"
                 android:title="@string/pagamentos"/>

@@ -12,7 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".view.agenda.AgendaActivity"></activity>
         <activity android:name=".view.pagamento.MensalidadeActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".SplashScreen">
@@ -23,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.perfil.PerfilActivity" />
+        <activity android:name=".view.login.LoginActivity" />
     </application>
 
 </manifest>
